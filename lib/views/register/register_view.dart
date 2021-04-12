@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:worknotes/views/login/login_view.dart';
 import 'package:worknotes/widgets/navigation_bar/navigation_bar.dart';
 
 class RegisterView extends StatelessWidget {
@@ -8,7 +9,11 @@ class RegisterView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: NavigationBar(),
+        title: SizedBox(
+          height: 80,
+          width: 150,
+          child: Image.asset('assets/logo.png'),
+        ),
       ),
       body: Container(
           decoration: BoxDecoration(
@@ -68,7 +73,9 @@ class RegisterView extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(right: 30),
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                             child: Text('Back'),
                             elevation: 5.0,
                           ),

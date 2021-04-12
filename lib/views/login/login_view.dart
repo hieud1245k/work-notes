@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:worknotes/views/home/home_view.dart';
 import 'package:worknotes/views/register/register_view.dart';
 import 'package:worknotes/widgets/navigation_bar/navigation_bar.dart';
 
@@ -9,7 +10,11 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: NavigationBar(),
+        title: SizedBox(
+          height: 80,
+          width: 150,
+          child: Image.asset('assets/logo.png'),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -70,7 +75,13 @@ class LoginView extends StatelessWidget {
                       ),
                       RaisedButton(
                         color: Colors.blue,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeView()
+                              ));
+                        },
                         child: Text('Login'),
                         elevation: 5.0,
                       ),

@@ -17,11 +17,7 @@ class NavigationBar extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _NarBarItem("Episodes"),
-              SizedBox(
-                width: 60,
-              ),
-              _NarBarItem("About")
+              _NarBarItem("Home"),
             ],
           )
         ],

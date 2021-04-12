@@ -6,18 +6,31 @@ import 'package:worknotes/views/home/home_view.dart';
 import 'package:worknotes/views/register/register_view.dart';
 import 'package:provider/provider.dart';
 
-Future<void> main() async {
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-}
+Future<void> main() async {}
 
 class LoginView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return LoginPage();
+  }
+}
 
+class LoginPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _isObscure = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: SizedBox(
           height: 80,
@@ -58,11 +71,19 @@ class LoginView extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 20),
                     child: TextField(
                       controller: passwordController,
-                      obscureText: true,
+                      obscureText: _isObscure,
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Password',
-                      ),
+                          border: OutlineInputBorder(),
+                          labelText: 'Password',
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isObscure = !_isObscure;
+                                });
+                              },
+                              icon: Icon(_isObscure
+                                  ? Icons.visibility
+                                  : Icons.visibility_off))),
                     ),
                   ),
                 ),
@@ -87,12 +108,20 @@ class LoginView extends StatelessWidget {
                       RaisedButton(
                         color: Colors.blue,
                         onPressed: () {
-                          log('username'+ emailController.text.trim());
+
+                          _scaffoldKey.currentState.showSnackBar(
+                            SnackBar(content: Row(children: <Widget>[
+                              CircularProgressIndicator(),
+                              Text("Login..."),
+                            ],
+                            ),
+                            ),
+                          );
+                          log('username' + emailController.text.trim());
                           log('pwd' + passwordController.text.trim());
                           context.read<AuthenticationService>().signIn(
-                            email: emailController.text.trim(),
-                            password: passwordController.text.trim()
-                          );
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim());
                         },
                         child: Text('Login'),
                         elevation: 5.0,

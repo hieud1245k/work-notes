@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:worknotes/service/AuthenticationService.dart';
+import 'package:worknotes/views/login/login_view.dart';
+import 'package:provider/provider.dart';
 
 class NavigationBar extends StatelessWidget {
   const NavigationBar({Key key}) : super(key: key);
@@ -19,7 +22,18 @@ class NavigationBar extends StatelessWidget {
             children: <Widget>[
               _NarBarItem("Home"),
             ],
-          )
+          ),
+          // ignore: deprecated_member_use
+          Container(
+            alignment: Alignment.centerRight,
+            child: RaisedButton(
+              onPressed: () {
+                context.read<AuthenticationService>().signOut();
+              },
+              child: Text('Return Login'),
+              elevation: 5.0,
+            ),
+          ),
         ],
       ),
     );

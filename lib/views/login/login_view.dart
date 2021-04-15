@@ -23,6 +23,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isObscure = true;
@@ -82,8 +83,8 @@ class _LoginPageState extends State<LoginPage> {
                                 });
                               },
                               icon: Icon(_isObscure
-                                  ? Icons.visibility
-                                  : Icons.visibility_off))),
+                                  ? Icons.visibility_off
+                                  : Icons.visibility))),
                     ),
                   ),
                 ),
@@ -109,19 +110,23 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.blue,
                         onPressed: () {
 
-                          _scaffoldKey.currentState.showSnackBar(
-                            SnackBar(content: Row(children: <Widget>[
-                              CircularProgressIndicator(),
-                              Text("Login..."),
-                            ],
-                            ),
-                            ),
-                          );
-                          log('username' + emailController.text.trim());
-                          log('pwd' + passwordController.text.trim());
-                          context.read<AuthenticationService>().signIn(
-                              email: emailController.text.trim(),
-                              password: passwordController.text.trim());
+                          String email = emailController.text.trim();
+                          String password = passwordController.text.trim();
+
+                          if(checkAccount(email, password)) {
+                            _scaffoldKey.currentState.showSnackBar(
+                              SnackBar(content: Row(children: <Widget>[
+                                CircularProgressIndicator(),
+                                Text("Login..."),
+                              ],
+                              ),
+                              ),
+                            );
+
+                            context.read<AuthenticationService>().signIn(
+                                email: email,
+                                password: password);
+                          }
                         },
                         child: Text('Login'),
                         elevation: 5.0,
@@ -135,5 +140,49 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  bool checkAccount(String email, String password) {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    if(email.isEmpty) {
+      showDialog(context: context, builder: (_) => AlertDialog(
+        title: Text("Notice!"),
+        content: Text("Email is required?"),
+        actions: [
+          okButton
+        ],
+      ));
+      return false;
+    }
+
+    if(password.isEmpty) {
+      showDialog(context: context, builder: (_) =>  AlertDialog(
+        title: Text("Notice!"),
+        content: Text("Password is required?"),
+        actions: [
+          okButton
+        ],
+      ));
+      return false;
+    }
+
+    if(password.length <= 4 || password.length >= 16) {
+      showDialog(context: context, builder: (_) =>  AlertDialog(
+        title: Text("Notice!"),
+        content: Text("Password must be greater than 4 and least than 16 characters?"),
+        actions: [
+          okButton
+        ],
+      ));
+
+      return false;
+    }
+    return true;
   }
 }

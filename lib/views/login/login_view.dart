@@ -1,10 +1,19 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:worknotes/service/AuthenticationService.dart';
 import 'package:worknotes/views/home/home_view.dart';
 import 'package:worknotes/views/register/register_view.dart';
-import 'package:worknotes/widgets/navigation_bar/navigation_bar.dart';
+import 'package:provider/provider.dart';
+
+Future<void> main() async {
+
+}
 
 class LoginView extends StatelessWidget {
-  const LoginView({Key key}) : super(key: key);
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +43,7 @@ class LoginView extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: TextField(
+                      controller: emailController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Username',
@@ -47,6 +57,7 @@ class LoginView extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: TextField(
+                      controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -76,11 +87,12 @@ class LoginView extends StatelessWidget {
                       RaisedButton(
                         color: Colors.blue,
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeView()
-                              ));
+                          log('username'+ emailController.text.trim());
+                          log('pwd' + passwordController.text.trim());
+                          context.read<AuthenticationService>().signIn(
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim()
+                          );
                         },
                         child: Text('Login'),
                         elevation: 5.0,

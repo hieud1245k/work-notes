@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:worknotes/views/login/login_view.dart';
 import 'package:worknotes/widgets/navigation_bar/navigation_bar.dart';
+import 'package:worknotes/service/AuthenticationService.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+Future<void> main() async {}
 
 class RegisterView extends StatelessWidget {
-  const RegisterView({Key key}) : super(key: key);
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +39,7 @@ class RegisterView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: TextField(
+                        controller: emailController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Username',
@@ -44,6 +53,7 @@ class RegisterView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: TextField(
+                        controller: passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -57,6 +67,7 @@ class RegisterView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: TextField(
+                        controller: confirmPasswordController,
                         obscureText: true,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -82,7 +93,41 @@ class RegisterView extends StatelessWidget {
                         ),
                         RaisedButton(
                           color: Colors.blue,
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (emailController.text.isEmpty)
+                            {
+                              showAlertDialog(context, "Please enter Email.");
+                            }
+                            else if (passwordController.text.isEmpty)
+                            {
+                              showAlertDialog(context, "Please enter Password.");
+                            }
+                            else if (confirmPasswordController.text.isEmpty)
+                            {
+                              showAlertDialog(context, "Please enter ConfirmPassword.");
+                            }
+                            else if (passwordController.text ==
+                                confirmPasswordController.text) {
+                              try {
+                                UserCredential userCredential =
+                                    await FirebaseAuth.instance
+                                        .createUserWithEmailAndPassword(
+                                            email: emailController.text.trim(),
+                                            password: passwordController.text.trim());
+                                Navigator.pop(context);
+                              } on FirebaseAuthException catch (e) {
+                                if (e.code == 'weak-password') {
+                                  showAlertDialog(context, "The password provided is too weak.");
+                                } else if (e.code == 'email-already-in-use') {
+                                  showAlertDialog(context, "The account already exists for that email.");
+                                }
+                              } catch (e) {
+                                showAlertDialog(context, e);
+                              }
+                            } else {
+                              showAlertDialog(context, "Password and ConfirmPassword must same.");
+                            }
+                          },
                           child: Text('Register'),
                           elevation: 5.0,
                         ),
@@ -93,6 +138,32 @@ class RegisterView extends StatelessWidget {
               ),
             ),
           )),
+    );
+  }
+
+  showAlertDialog(BuildContext context, String contend) {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      textColor: Colors.redAccent,
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Warning"),
+      content: Text(contend),
+      backgroundColor: Color.fromARGB(220, 117, 218, 255),
+      actions: [
+        okButton,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

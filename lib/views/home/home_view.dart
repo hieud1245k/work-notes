@@ -1,15 +1,22 @@
 import 'dart:html';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_db_web_unofficial/firebasedbwebunofficial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:worknotes/views/home/work_view_detail.dart';
 import 'package:worknotes/widgets/navigation_bar/navigation_bar.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({Key key}) : super(key: key);
+  final FirebaseDatabaseWeb _database = FirebaseDatabaseWeb.instance;
+
+  // ignore: deprecated_member_use
+  FirebaseAuth firebaseUser;
 
   @override
   Widget build(BuildContext context) {
+    firebaseUser = FirebaseAuth.instance;
+
     return Scaffold(
       appBar: AppBar(
         title: NavigationBar(),
@@ -60,36 +67,74 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
-}
 
-TextEditingController _textFieldController = TextEditingController();
+  TextEditingController _textFieldController = TextEditingController();
 
-Future<void> _displayTextInputDialog(BuildContext context) async {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text('Add your work'),
-        content: TextField(
-          controller: _textFieldController,
-          decoration: InputDecoration(hintText: "Enter your work title"),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('CANCEL'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+  Future<void> _displayTextInputDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Add your work'),
+          content: TextField(
+            controller: _textFieldController,
+            decoration: InputDecoration(hintText: "Enter your work title"),
           ),
-          FlatButton(
-            child: Text('OK'),
-            onPressed: () {
-              print(_textFieldController.text);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      );
-    },
-  );
+          actions: <Widget>[
+            // ignore: deprecated_member_use
+            FlatButton(
+              child: Text('CANCEL'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            // ignore: deprecated_member_use
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                _create(_textFieldController.text.trim());
+
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => WorkViewDetail()));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _create(String workTitle) async {
+    try {
+      var id = firebaseUser.currentUser.uid;
+
+      FirebaseDatabaseWeb.instance
+          .reference()
+          .child("test")
+          .child("a")
+          .set("Hey");
+
+      //To set a Single Value
+      FirebaseDatabaseWeb.instance
+          .reference()
+          .child("test")
+          .child("b")
+          .set("Guys");
+
+      //To set Multiple Values
+      FirebaseDatabaseWeb.instance
+          .reference()
+          .child("test")
+          .child("c")
+          .set({
+        "1": "This will be",
+        "2": "Your New",
+        "3": "Journey to Web Devlopment"
+      });
+      
+    } catch (e) {
+      print(e);
+    }
+  }
 }

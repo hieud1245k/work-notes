@@ -10,7 +10,7 @@ class NavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 100,
-      child: Row(
+      child: Stack(
         children: <Widget>[
           SizedBox(
             height: 80,
@@ -25,15 +25,18 @@ class NavigationBar extends StatelessWidget {
           ),
           // ignore: deprecated_member_use
           Container(
-            alignment: Alignment.centerRight,
-            child: RaisedButton(
-              onPressed: () {
-                context.read<AuthenticationService>().signOut();
-              },
-              child: Text('Return Login'),
-              elevation: 5.0,
+              padding: const EdgeInsets.only(
+                  right: 50
+              ),
+              alignment: Alignment.centerRight,
+              child: RaisedButton(
+                onPressed: () {
+                  context.read<AuthenticationService>().signOut();
+                },
+                child: Text('Return Login'),
+                elevation: 5.0,
+              ),
             ),
-          ),
         ],
       ),
     );

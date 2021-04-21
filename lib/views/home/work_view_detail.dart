@@ -12,6 +12,7 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
     return Scaffold(
       appBar: AppBar(
         title: AppBar(
+          automaticallyImplyLeading: false,
           title: SizedBox(
             height: 80,
             width: 150,

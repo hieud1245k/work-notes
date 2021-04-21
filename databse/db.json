@@ -7,7 +7,15 @@
     "UrkqgUsvXUX9IVDs0645XXUztdJ2" : {
         "name" : "Hiếu Minh",
         "birthday" : "",
-        "phoneNumber" : "0123456789"
+        "phoneNumber" : "0123456789",
+        "works" : [
+             {
+                "title" : "abc",
+                "content" : "bcd",
+                "createdDate" : "2020",
+                "modifiedDate" : "2020"
+            }
+        ]
     },
     "vsV6DllcsVNPzML4gd69ardUq9A2" : {
         "name" : "Hiếu Minh",

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_db_web_unofficial/firebasedbwebunofficial.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:worknotes/FirebaseCustom.dart';
 import 'package:worknotes/service/AuthenticationService.dart';
 
 class NavigationBar extends StatefulWidget {
@@ -10,13 +10,26 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavBar extends State<NavigationBar> {
+
+  final FirebaseDatabaseWeb _database = FirebaseDatabaseWeb.instance;
+
+  // ignore: deprecated_member_use
   FirebaseAuth firebaseUser = FirebaseAuth.instance;
+
+  DatabaseRef dbRef;
+
   String name = "";
-  var database = fire.database;
 
   @override
-  Widget build(BuildContext context) {
-    @override
+  void initState() {
+    super.initState();
+    var id = firebaseUser.currentUser.uid;
+    dbRef = _database.reference().child(id).child('name');
+    dbRef.once().then((value) {
+      name = value.value;
+    });
+  }
+
     Widget build(BuildContext context) {
       return Container(
         height: 100,
@@ -33,19 +46,18 @@ class _NavBar extends State<NavigationBar> {
                 _NarBarItem("Home"),
               ],
             ),
-            // ignore: deprecated_member_use
             Container(
               padding: const EdgeInsets.only(right: 50),
               alignment: Alignment.centerRight,
               child: Row(
                 children: [
+                  Text("Xin chào, " + name),
                   FlatButton(
                     onPressed: () {
                       context.read<AuthenticationService>().signOut();
                     },
                     child: Text('Return Login'),
                   ),
-                  Text("Xin chào " + name),
                 ],
               ),
             ),
@@ -54,21 +66,6 @@ class _NavBar extends State<NavigationBar> {
       );
     }
   }
-
-  Future<String> getValueA() async {
-    var id = firebaseUser.currentUser.uid;
-
-    database.ref(id).onValue.listen((event) {
-      var datasnapshot = event.snapshot;
-
-      String n = datasnapshot.child("name").val();
-
-      setState(() {
-        name = n;
-      });
-    });
-  }
-}
 
 class _NarBarItem extends StatelessWidget {
   final String title;

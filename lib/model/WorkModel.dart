@@ -7,26 +7,27 @@ class WorkModel {
   String key;
   String title;
   String content;
-  Time createdDate = Time();
-  Time modifiedDate = Time();
+  // Time createdDate = Time();
+  // Time modifiedDate = Time();
   bool isDelete = false;
 
-  WorkModel(this.title);
+  WorkModel(this.title, {this.key});
 
-  WorkModel.fromSnapshot(DataSnapshot snapshot)
-      : key = snapshot.key,
-        title = snapshot.value["title"],
-        content = snapshot.value["content"],
-        createdDate = snapshot.value["createdDate"],
-        modifiedDate = snapshot.value["ModifiedDate"],
-        isDelete = snapshot.value["isDelete"];
 
+  WorkModel.fromJson(Map<String, dynamic> json, dynamic key)
+      : key = key,
+        title = json["title"],
+        content = json["content"],
+        // createdDate = json["createdDate"],
+        // modifiedDate = json["ModifiedDate"],
+        isDelete = json["isDelete"];
+  
   toJson() {
     return {
       "title": title,
       "content": content,
-      "createdDate": createdDate.toJson(),
-      "ModifiedDate": modifiedDate.toJson(),
+      // "createdDate": createdDate.toJson(),
+      // "ModifiedDate": modifiedDate.toJson(),
       "isDelete": isDelete
     };
   }

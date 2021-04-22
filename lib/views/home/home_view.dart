@@ -1,7 +1,6 @@
 import 'dart:html';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_db_web_unofficial/firebasedbwebunofficial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,7 +8,12 @@ import 'package:worknotes/model/WorkModel.dart';
 import 'package:worknotes/views/home/work_view_detail.dart';
 import 'package:worknotes/widgets/navigation_bar/navigation_bar.dart';
 
+List<WorkModel> works = [];
+
 class HomeView extends StatefulWidget {
+
+  HomeView({Key key, @required works}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return HomeState();
@@ -17,7 +21,6 @@ class HomeView extends StatefulWidget {
 }
 
 class HomeState extends State<HomeView> {
-  List<WorkModel> works = [];
   DatabaseRef dbRef;
 
   final TextEditingController _textFieldController = TextEditingController();
@@ -27,44 +30,48 @@ class HomeState extends State<HomeView> {
   // ignore: deprecated_member_use
   FirebaseAuth firebaseUser = FirebaseAuth.instance;
 
+  bool isCheckAddNote = false;
+
   @override
   void initState() {
+
+    print('init');
+
     super.initState();
+    var id = firebaseUser.currentUser.uid;
+    dbRef = _database.reference().child(id).child('works');
+    dbRef.onChildAdded.listen((event) {
+      if (isCheckAddNote) {
+        setState(() {
+          isCheckAddNote = false;
+          var model = WorkModel.fromJson(event.value, event.key);
+          works.add(model);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => WorkViewDetail(),
+                  settings: RouteSettings(
+                    arguments: model,
+                  )));
+        });
+      }
+    });
+    dbRef.once().then((value) {
+      works.clear();
+      Map<dynamic, dynamic> resultList = value.value;
+      resultList.forEach((key, value) {
+        var model = WorkModel.fromJson(value , key);
+        works.add(model);
+      });
+    });
   }
 
-  T cast<T>(x) => x is T ? x : null;
+
 
   @override
   Widget build(BuildContext context) {
 
-    var id = firebaseUser.currentUser.uid;
-    dbRef = _database.reference().child(id).child('works');
-    dbRef.onChildAdded.listen((event) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => WorkViewDetail()));
-    });
-
-    WorkModel model1 = WorkModel("title");
-    WorkModel model2 = WorkModel("title1");
-
-    works.add(model1);
-    works.add(model2);
-
-    dbRef.once().then((value) {
-      Map<dynamic, dynamic> resultList = value.value;
-      print(resultList);
-      print(resultList.values);
-      print(resultList.keys);
-
-      resultList.forEach((key, value) {
-        print(key);
-        print(value);
-
-        var model = cast<WorkModel>(value);
-        print(model.title);
-      });
-
-    });
+    print('build');
 
     return Scaffold(
       appBar: AppBar(
@@ -85,10 +92,14 @@ class HomeState extends State<HomeView> {
             children: List.generate(works.length, (index) {
               return GestureDetector(
                 onTap: () {
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => WorkViewDetail()));
+                          builder: (context) => WorkViewDetail(),
+                      settings: RouteSettings(
+                          arguments: works[index],
+                      )));
                 },
                 child: Container(
                   child: Card(
@@ -139,9 +150,12 @@ class HomeState extends State<HomeView> {
             FlatButton(
               child: Text('OK'),
               onPressed: () {
+                setState(() {
+                  isCheckAddNote = true;
+                });
+                Navigator.pop(context);
                 WorkModel workModel =
                     WorkModel(_textFieldController.text.trim());
-
                 dbRef.push().set(workModel.toJson());
               },
             ),

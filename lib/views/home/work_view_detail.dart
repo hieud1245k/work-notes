@@ -3,6 +3,7 @@ import 'package:firebase_db_web_unofficial/firebasedbwebunofficial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:worknotes/model/WorkModel.dart';
+import 'package:toast/toast.dart';
 
 class WorkViewDetail extends StatefulWidget {
   @override
@@ -23,26 +24,20 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
   // ignore: deprecated_member_use
   FirebaseAuth firebaseUser = FirebaseAuth.instance;
 
-  bool isCheckUpdate = false;
-
   @override
   void initState() {
     super.initState();
     var id = firebaseUser.currentUser.uid;
     dbRef = _database.reference().child(id).child('works');
-    dbRef.onChildChanged.listen((event) {
-      if (isCheckUpdate) {
-        setState(() {
-          isCheckUpdate = false;
-          _contentController.text = event.value["content"];
-        });
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    workModel = ModalRoute.of(context).settings.arguments;
+
+    workModel = ModalRoute
+        .of(context)
+        .settings
+        .arguments;
 
     if (workModel.content != null && workModel.content.isNotEmpty)
       _contentController.text = workModel.content.toString();
@@ -93,19 +88,17 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
               Container(
                 alignment: Alignment.centerRight,
                 child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     // ignore: deprecated_member_use
                     RaisedButton(
                       onPressed: () {
-                        setState(() {
-                          isCheckUpdate = true;
-                        });
-                        print(workModel.key);
-                        print(_contentController.text.toString().trim());
                         dbRef
                             .child(workModel.key)
                             .child('content')
-                            .set(_contentController.text.toString().trim());
+                            .set(_contentController.text.toString().trim()).catchError((onError) {
+                        });
+                        Toast.show("Update content success!", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
                       },
                       child: Text('Save'),
                     ),
@@ -113,7 +106,12 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
                       padding: const EdgeInsets.only(left: 20),
                       // ignore: deprecated_member_use
                       child: RaisedButton(
-                        onPressed: () {},
+                        onPressed: () {
+
+                          _displayTextInputDialog(context);
+
+
+                        },
                         child: Text('Delete'),
                       ),
                     ),
@@ -124,6 +122,37 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _displayTextInputDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Notice'),
+          content: Text("Are you sure you want to delele this work note?"),
+          actions: <Widget>[
+            // ignore: deprecated_member_use
+            FlatButton(
+              child: Text('CANCEL'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            // ignore: deprecated_member_use
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                dbRef
+                    .child(workModel.key).remove();
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

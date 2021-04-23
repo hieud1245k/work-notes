@@ -13,7 +13,6 @@ List<WorkModel> works = [];
 class HomeView extends StatefulWidget {
 
   HomeView({Key key, @required works}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() {
     return HomeState();
@@ -31,13 +30,12 @@ class HomeState extends State<HomeView> {
   FirebaseAuth firebaseUser = FirebaseAuth.instance;
 
   bool isCheckAddNote = false;
+  ValueNotifier<List<WorkModel>> _workNotifier;
 
   @override
   void initState() {
-
-    print('init');
-
     super.initState();
+    _workNotifier = ValueNotifier([]);
     var id = firebaseUser.currentUser.uid;
     dbRef = _database.reference().child(id).child('works');
     dbRef.onChildAdded.listen((event) {
@@ -56,23 +54,24 @@ class HomeState extends State<HomeView> {
         });
       }
     });
+    getValue();
+  }
+
+  void getValue() {
+    works.clear();
     dbRef.once().then((value) {
       works.clear();
       Map<dynamic, dynamic> resultList = value.value;
       resultList.forEach((key, value) {
         var model = WorkModel.fromJson(value , key);
         works.add(model);
+        _workNotifier.value = works;
       });
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
-    print('build');
-
     return Scaffold(
       appBar: AppBar(
         title: NavigationBar(),
@@ -87,32 +86,41 @@ class HomeState extends State<HomeView> {
         child: Padding(
           padding: const EdgeInsets.only(
               top: 100, right: 100, left: 100, bottom: 100),
-          child: GridView.count(
-            crossAxisCount: 5,
-            children: List.generate(works.length, (index) {
-              return GestureDetector(
-                onTap: () {
+          child: ValueListenableBuilder<List<WorkModel>>(
+            valueListenable: _workNotifier,
+            builder: (context, works, child) {
+              return GridView.count(
+                crossAxisCount: 5,
+                children: List.generate(works.length, (index) {
+                  return GestureDetector(
+                    onTap: () {
 
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => WorkViewDetail(),
-                      settings: RouteSettings(
-                          arguments: works[index],
-                      )));
-                },
-                child: Container(
-                  child: Card(
-                    color: Colors.grey,
-                    child: Center(
-                        child: Text(
-                      works[index].title,
-                      style: TextStyle(fontSize: 28),
-                    )),
-                  ),
-                ),
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WorkViewDetail(),
+                              settings: RouteSettings(
+                                arguments: works[index],
+                              ))).then((value) {
+                                setState(() {
+                        getValue();
+                                });
+                      });
+                    },
+                    child: Container(
+                      child: Card(
+                        color: Colors.grey,
+                        child: Center(
+                            child: Text(
+                              works[index].title,
+                              style: TextStyle(fontSize: 28),
+                            )),
+                      ),
+                    ),
+                  );
+                }),
               );
-            }),
+            },
           ),
         ),
       ),

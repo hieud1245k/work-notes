@@ -10,15 +10,15 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavBar extends State<NavigationBar> {
-
   final FirebaseDatabaseWeb _database = FirebaseDatabaseWeb.instance;
 
-  // ignore: deprecated_member_use
   FirebaseAuth firebaseUser = FirebaseAuth.instance;
 
   DatabaseRef dbRef;
 
   String name = "";
+
+  ValueNotifier<String> _workNotifier = ValueNotifier("");
 
   @override
   void initState() {
@@ -27,45 +27,57 @@ class _NavBar extends State<NavigationBar> {
     dbRef = _database.reference().child(id).child('name');
     dbRef.once().then((value) {
       name = value.value;
+      _workNotifier.value = name;
     });
   }
 
-    Widget build(BuildContext context) {
-      return Container(
-        height: 100,
-        child: Stack(
-          children: <Widget>[
-            SizedBox(
-              height: 80,
-              width: 150,
-              child: Image.asset('assets/logo.png'),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                _NarBarItem("Home"),
-              ],
-            ),
-            Container(
-              padding: const EdgeInsets.only(right: 50),
-              alignment: Alignment.centerRight,
-              child: Row(
-                children: [
-                  Text("Xin chào, " + name),
-                  FlatButton(
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      child: Row(
+        children: <Widget>[
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                height: 80,
+                width: 150,
+                child: Image.asset('assets/logo.png'),
+              ),
+              _NarBarItem("Home"),
+            ],
+          ),
+          Spacer(),
+          Container(
+            padding: const EdgeInsets.only(right: 50),
+            alignment: Alignment.centerRight,
+            child: Row(
+              children: [
+                ValueListenableBuilder<String>(
+                    valueListenable: _workNotifier,
+                    builder: (context, works, child) {
+                  return Text("Xin chào, " + name);
+                }),
+                // ignore: deprecated_member_use
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 20
+                  ),
+                  child: FlatButton(
                     onPressed: () {
                       context.read<AuthenticationService>().signOut();
                     },
-                    child: Text('Return Login'),
+                    child: Text('Logout' , style:  TextStyle(fontSize: 18, color: Colors.black),),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
-    }
+          ),
+        ],
+      ),
+    );
   }
+}
 
 class _NarBarItem extends StatelessWidget {
   final String title;

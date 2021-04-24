@@ -1,14 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:worknotes/service/AuthenticationService.dart';
-import 'package:worknotes/views/home/home_view.dart';
-import 'package:worknotes/views/register/register_view.dart';
 import 'package:provider/provider.dart';
+import 'package:worknotes/constant/Constant.dart';
+import 'package:worknotes/service/AuthenticationService.dart';
+import 'package:worknotes/views/register/register_view.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-Future<void> main() async {}
 
 class LoginView extends StatelessWidget {
   @override
@@ -23,10 +19,22 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isObscure = true;
+  Widget okButton;
+
+  @override
+  void initState() {
+    super.initState();
+    // ignore: deprecated_member_use
+    okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +54,7 @@ class _LoginPageState extends State<LoginPage> {
             fit: BoxFit.fill,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 130),
+        child: Center(
           child: Container(
             child: Column(
               children: [
@@ -95,6 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(right: 30),
+                        // ignore: deprecated_member_use
                         child: RaisedButton(
                           onPressed: () {
                             Navigator.push(
@@ -106,27 +114,35 @@ class _LoginPageState extends State<LoginPage> {
                           elevation: 5.0,
                         ),
                       ),
+                      // ignore: deprecated_member_use
                       RaisedButton(
                         color: Colors.blue,
                         onPressed: () {
-
                           String email = emailController.text.trim();
                           String password = passwordController.text.trim();
 
-                          if(checkAccount(email, password)) {
-                            _scaffoldKey.currentState.showSnackBar(
-                              SnackBar(content: Row(children: <Widget>[
-                                CircularProgressIndicator(),
-                                Text("Login..."),
-                              ],
+                          // ignore: deprecated_member_use
+                          _scaffoldKey.currentState.showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: <Widget>[
+                                  CircularProgressIndicator(),
+                                  Text("Login..."),
+                                ],
                               ),
-                              ),
-                            );
-
-                            context.read<AuthenticationService>().signIn(
-                                email: email,
-                                password: password);
-                          }
+                            ),
+                          );
+                          context
+                              .read<AuthenticationService>()
+                              .signIn(email: email, password: password)
+                              .then((value) {
+                            if (value != Constant.SIGN_IN_SUCCESS) {
+                              passwordController.text = "";
+                              // ignore: deprecated_member_use
+                              _scaffoldKey.currentState.hideCurrentSnackBar();
+                              showAlertDialog(context, value);
+                            }
+                          });
                         },
                         child: Text('Login'),
                         elevation: 5.0,
@@ -142,47 +158,29 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  bool checkAccount(String email, String password) {
+  showAlertDialog(BuildContext context, String content) {
+    // ignore: deprecated_member_use
     Widget okButton = FlatButton(
       child: Text("OK"),
+      textColor: Colors.redAccent,
       onPressed: () {
         Navigator.pop(context);
       },
     );
+    AlertDialog alert = AlertDialog(
+      title: Text("Warning"),
+      content: Text(content),
+      backgroundColor: Color.fromARGB(220, 117, 218, 255),
+      actions: [
+        okButton,
+      ],
+    );
 
-    if(email.isEmpty) {
-      showDialog(context: context, builder: (_) => AlertDialog(
-        title: Text("Notice!"),
-        content: Text("Email is required?"),
-        actions: [
-          okButton
-        ],
-      ));
-      return false;
-    }
-
-    if(password.isEmpty) {
-      showDialog(context: context, builder: (_) =>  AlertDialog(
-        title: Text("Notice!"),
-        content: Text("Password is required?"),
-        actions: [
-          okButton
-        ],
-      ));
-      return false;
-    }
-
-    if(password.length <= 4 || password.length >= 16) {
-      showDialog(context: context, builder: (_) =>  AlertDialog(
-        title: Text("Notice!"),
-        content: Text("Password must be greater than 4 and least than 16 characters?"),
-        actions: [
-          okButton
-        ],
-      ));
-
-      return false;
-    }
-    return true;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

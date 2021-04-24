@@ -1,21 +1,37 @@
-import 'package:flutter/material.dart';
-import 'package:worknotes/views/login/login_view.dart';
-import 'package:worknotes/widgets/navigation_bar/navigation_bar.dart';
-import 'package:worknotes/service/AuthenticationService.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_db_web_unofficial/firebasedbwebunofficial.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:worknotes/constant/Constant.dart';
+import 'package:worknotes/service/AuthenticationService.dart';
 
-Future<void> main() async {}
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-class RegisterView extends StatelessWidget {
+class RegisterView extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _RegisterViewPage();
+  }
+}
+
+class _RegisterViewPage extends State<RegisterView> {
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController nickNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
+  var _isObscure = true;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: SizedBox(
           height: 80,
@@ -28,8 +44,7 @@ class RegisterView extends StatelessWidget {
               image: DecorationImage(
                   image: AssetImage("assets/background.jpg"),
                   fit: BoxFit.fill)),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 130),
+          child: Center(
             child: Container(
               child: Column(
                 children: [
@@ -39,10 +54,24 @@ class RegisterView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: TextField(
+                        controller: nickNameController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Nick Name',
+                        ),
+                        onChanged: (text) {},
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 300,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: TextField(
                         controller: emailController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Username',
+                          labelText: 'Email',
                         ),
                         onChanged: (text) {},
                       ),
@@ -54,11 +83,19 @@ class RegisterView extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 20),
                       child: TextField(
                         controller: passwordController,
-                        obscureText: true,
+                        obscureText: _isObscure,
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Password',
-                        ),
+                            border: OutlineInputBorder(),
+                            labelText: 'Password',
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscure = !_isObscure;
+                                  });
+                                },
+                                icon: Icon(_isObscure
+                                    ? Icons.visibility_off
+                                    : Icons.visibility))),
                       ),
                     ),
                   ),
@@ -68,11 +105,19 @@ class RegisterView extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 20),
                       child: TextField(
                         controller: confirmPasswordController,
-                        obscureText: true,
+                        obscureText: _isObscure,
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Confirm password',
-                        ),
+                            border: OutlineInputBorder(),
+                            labelText: 'Confirm Password',
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscure = !_isObscure;
+                                  });
+                                },
+                                icon: Icon(_isObscure
+                                    ? Icons.visibility_off
+                                    : Icons.visibility))),
                       ),
                     ),
                   ),
@@ -83,6 +128,7 @@ class RegisterView extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 30),
+                          // ignore: deprecated_member_use
                           child: RaisedButton(
                             onPressed: () {
                               Navigator.pop(context);
@@ -91,41 +137,60 @@ class RegisterView extends StatelessWidget {
                             elevation: 5.0,
                           ),
                         ),
+                        // ignore: deprecated_member_use
                         RaisedButton(
                           color: Colors.blue,
-                          onPressed: () async {
-                            if (emailController.text.isEmpty)
-                            {
-                              showAlertDialog(context, "Please enter Email.");
-                            }
-                            else if (passwordController.text.isEmpty)
-                            {
-                              showAlertDialog(context, "Please enter Password.");
-                            }
-                            else if (confirmPasswordController.text.isEmpty)
-                            {
-                              showAlertDialog(context, "Please enter ConfirmPassword.");
-                            }
-                            else if (passwordController.text ==
+                          onPressed: () {
+                            if (nickNameController.text.trim().isEmpty) {
+                              showAlertDialog(context, "Nick name is required!");
+                            } else if (!emailController.text
+                                .toString()
+                                .trim()
+                                .isValidEmail()) {
+                              showAlertDialog(context, "Email format is incorrect!");
+                            } else if (passwordController.text !=
                                 confirmPasswordController.text) {
-                              try {
-                                UserCredential userCredential =
-                                    await FirebaseAuth.instance
-                                        .createUserWithEmailAndPassword(
-                                            email: emailController.text.trim(),
-                                            password: passwordController.text.trim());
-                                Navigator.pop(context);
-                              } on FirebaseAuthException catch (e) {
-                                if (e.code == 'weak-password') {
-                                  showAlertDialog(context, "The password provided is too weak.");
-                                } else if (e.code == 'email-already-in-use') {
-                                  showAlertDialog(context, "The account already exists for that email.");
-                                }
-                              } catch (e) {
-                                showAlertDialog(context, e);
-                              }
+                              showAlertDialog(context,
+                                  "Password and ConfirmPassword must same.");
                             } else {
-                              showAlertDialog(context, "Password and ConfirmPassword must same.");
+                              // ignore: deprecated_member_use
+                              _scaffoldKey.currentState.showSnackBar(
+                                SnackBar(
+                                  content: Row(
+                                    children: <Widget>[
+                                      CircularProgressIndicator(),
+                                      Text("Register..."),
+                                    ],
+                                  ),
+                                ),
+                              );
+
+                              context
+                                  .read<AuthenticationService>()
+                                  .signUp(
+                                      email: emailController.text.toString(),
+                                      password:
+                                          passwordController.text.toString())
+                                  .then((value) {
+                                if (value != Constant.SIGN_UP_SUCCESS) {
+                                  passwordController.text = "";
+                                  confirmPasswordController.text = "";
+                                  // ignore: deprecated_member_use
+                                  _scaffoldKey.currentState
+                                      // ignore: deprecated_member_use
+                                      .hideCurrentSnackBar();
+                                  showAlertDialog(context, value);
+                                } else {
+                                  var id =
+                                      FirebaseAuth.instance.currentUser.uid;
+                                  FirebaseDatabaseWeb.instance
+                                      .reference()
+                                      .child(id)
+                                      .child("name")
+                                      .set(nickNameController.text.toString());
+                                  Navigator.pop(context);
+                                }
+                              });
                             }
                           },
                           child: Text('Register'),
@@ -141,7 +206,8 @@ class RegisterView extends StatelessWidget {
     );
   }
 
-  showAlertDialog(BuildContext context, String contend) {
+  showAlertDialog(BuildContext context, String content) {
+    // ignore: deprecated_member_use
     Widget okButton = FlatButton(
       child: Text("OK"),
       textColor: Colors.redAccent,
@@ -149,10 +215,9 @@ class RegisterView extends StatelessWidget {
         Navigator.pop(context);
       },
     );
-
     AlertDialog alert = AlertDialog(
       title: Text("Warning"),
-      content: Text(contend),
+      content: Text(content),
       backgroundColor: Color.fromARGB(220, 117, 218, 255),
       actions: [
         okButton,
@@ -165,5 +230,13 @@ class RegisterView extends StatelessWidget {
         return alert;
       },
     );
+  }
+}
+
+extension EmailValidator on String {
+  bool isValidEmail() {
+    return RegExp(
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+        .hasMatch(this);
   }
 }

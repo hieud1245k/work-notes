@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:worknotes/service/AuthenticationService.dart';
 import 'package:worknotes/views/home/home_view.dart';
 
+import 'FirebaseCustom.dart';
 import 'views/login/login_view.dart';
 
 Future<void> main() async {
+  FirebaseHelper.initDatabase();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());

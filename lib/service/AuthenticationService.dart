@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:worknotes/constant/Constant.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
@@ -22,7 +23,7 @@ class AuthenticationService {
   Future<String> signIn({String email, String password}) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      return "Signed in";
+      return Constant.SIGN_IN_SUCCESS;
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
@@ -35,7 +36,7 @@ class AuthenticationService {
   Future<String> signUp({String email, String password}) async {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-      return "Signed up";
+      return Constant.SIGN_UP_SUCCESS;
     } on FirebaseAuthException catch (e) {
       return e.message;
     }

@@ -1,33 +1,32 @@
-import 'dart:convert';
-
-import 'package:firebase_database/firebase_database.dart';
 import 'package:worknotes/model/Time.dart';
 
 class WorkModel {
   String key;
   String title;
   String content;
-  // Time createdDate = Time();
-  // Time modifiedDate = Time();
+  bool isCheck = false;
+  Time createdDate = Time();
+  Time modifiedDate = Time();
   bool isDelete = false;
 
   WorkModel(this.title, {this.key});
-
 
   WorkModel.fromJson(Map<String, dynamic> json, dynamic key)
       : key = key,
         title = json["title"],
         content = json["content"],
-        // createdDate = json["createdDate"],
-        // modifiedDate = json["ModifiedDate"],
+        createdDate = Time.fromJson(json["createdDate"]),
+        modifiedDate = Time.fromJson(json["modifiedDate"]),
+        isCheck = json["isCheck"],
         isDelete = json["isDelete"];
   
   toJson() {
     return {
       "title": title,
       "content": content,
-      // "createdDate": createdDate.toJson(),
-      // "ModifiedDate": modifiedDate.toJson(),
+      "createdDate": createdDate.toJson(),
+      "isCheck": isCheck,
+      "modifiedDate": modifiedDate.toJson(),
       "isDelete": isDelete
     };
   }

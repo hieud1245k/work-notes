@@ -5,6 +5,7 @@ class WorkModel {
   String title;
   String content;
   bool isCheck = false;
+  bool isFavorite = false;
   Time createdDate = Time();
   Time modifiedDate = Time();
   bool isDelete = false;
@@ -18,6 +19,7 @@ class WorkModel {
         createdDate = Time.fromJson(json["createdDate"]),
         modifiedDate = Time.fromJson(json["modifiedDate"]),
         isCheck = json["isCheck"],
+        isFavorite = json["isFavorite"],
         isDelete = json["isDelete"];
   
   toJson() {
@@ -27,6 +29,7 @@ class WorkModel {
       "createdDate": createdDate.toJson(),
       "isCheck": isCheck,
       "modifiedDate": modifiedDate.toJson(),
+      "isFavorite": isFavorite,
       "isDelete": isDelete
     };
   }

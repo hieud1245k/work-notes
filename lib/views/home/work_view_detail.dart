@@ -38,8 +38,7 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
   Widget build(BuildContext context) {
     workModel = ModalRoute.of(context).settings.arguments;
 
-    if (workModel.content != null && workModel.content.isNotEmpty)
-      _contentController.text = workModel.content.toString();
+    if (workModel.content != null && workModel.content.isNotEmpty) _contentController.text = workModel.content.toString();
     _titleController.text = workModel.title.toString();
 
     return Scaffold(
@@ -71,8 +70,7 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
         child: Container(
           decoration: BoxDecoration(),
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 20, right: 70, left: 70, bottom: 10),
+            padding: const EdgeInsets.only(top: 20, right: 70, left: 70, bottom: 10),
             child: Stack(children: <Widget>[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,30 +79,24 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
                     children: [
                       Container(
                         margin: EdgeInsets.only(bottom: 10, top: 15, left: 35),
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.all(6),
                         height: 40,
                         child: Text(
                           workModel.title.toString(),
-                          style: TextStyle(
-                              color: kTitleColor,
-                              fontSize: kTitleSize,
-                              fontWeight: FontWeight.bold),
+                          style: TextStyle(color: kTitleColor, fontSize: kTitleSize, fontWeight: FontWeight.bold),
                         ),
-                        decoration: BoxDecoration(
-                            color: kBoxColor,
-                            borderRadius: BorderRadius.circular(kBoderRadius),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 7,
-                                offset: Offset(0, 5),
-                              )
-                            ]),
+                        decoration:
+                            BoxDecoration(color: kBoxColor, borderRadius: BorderRadius.circular(kBoderRadius / 2), boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 7,
+                            offset: Offset(0, 5),
+                          )
+                        ]),
                       ),
                       Container(
-                        margin:
-                            const EdgeInsets.only(right: 25, top: 10, left: 20),
+                        margin: const EdgeInsets.only(right: 25, top: 10, left: 20),
                         child: FlatButton(
                           padding: const EdgeInsets.all(0.0),
                           minWidth: 5,
@@ -130,11 +122,9 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
                         padding: EdgeInsets.all(8.0),
                         child: TextField(
                           controller: _contentController,
-                          style:
-                              TextStyle(fontSize: kTextSize, color: kTextColor),
+                          style: TextStyle(fontSize: kTextSize, color: kTextColor),
                           maxLines: 20,
-                          decoration: InputDecoration.collapsed(
-                              hintText: "Empty Content"),
+                          decoration: InputDecoration.collapsed(hintText: "Empty Content"),
                         ),
                       ),
                       decoration: BoxDecoration(color: kBoxColor, boxShadow: [
@@ -184,7 +174,7 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
                       margin: EdgeInsets.only(left: 15),
                       child: RaisedButton(
                         onPressed: () {
-                          _displayTextInputDialog(context);
+                          _deleteWorkDialog(context);
                         },
                         child: Text('Delete'),
                       ),
@@ -207,7 +197,11 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
     );
   }
 
-  Future<void> _displayTextInputDialog(BuildContext context) async {
+
+  //----------------------------------------------------------------------------------------------------------------------//
+  //_deleteWorkDialog
+  //----------------------------------------------------------------------------------------------------------------------//
+  Future<void> _deleteWorkDialog(BuildContext context) async {
     return showDialog(
       context: context,
       builder: (context) {
@@ -240,18 +234,18 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
     );
   }
 
-  Future<void> _editTitleDialog(
-      BuildContext context, TextEditingController title) async {
+
+  //----------------------------------------------------------------------------------------------------------------------//
+  //_editTitleDialog
+  //----------------------------------------------------------------------------------------------------------------------//
+  Future<void> _editTitleDialog(BuildContext context, TextEditingController title) async {
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text(
             'Edit Title',
-            style: TextStyle(
-                color: kTitleColor,
-                fontSize: kTitleSize,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: kTitleColor, fontSize: kTitleSize, fontWeight: FontWeight.bold),
           ),
           content: Container(
             padding: EdgeInsets.all(10),
@@ -263,16 +257,14 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
               style: TextStyle(fontSize: kTextSize, color: kTextColor),
               decoration: InputDecoration.collapsed(hintText: "Enter Title Content"),
             ),
-            decoration: BoxDecoration(
-                color: kBoxColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    spreadRadius: 2,
-                    blurRadius: 4,
-                    offset: Offset(0, 5),
-                  )
-                ]),
+            decoration: BoxDecoration(color: kBoxColor, boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 2,
+                blurRadius: 4,
+                offset: Offset(0, 5),
+              )
+            ]),
           ),
           actions: <Widget>[
             // ignore: deprecated_member_use

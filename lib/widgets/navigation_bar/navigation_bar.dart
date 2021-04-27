@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_db_web_unofficial/firebasedbwebunofficial.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:worknotes/constant.dart';
-import 'package:worknotes/service/AuthenticationService.dart';
 
 class NavigationBar extends StatefulWidget {
   @override
@@ -58,16 +56,6 @@ class _NavBar extends State<NavigationBar> {
                   TextStyle(color: kTextColor, fontSize: kTextSize),
                 );
               }),
-          // ignore: deprecated_member_use
-          FlatButton(
-            onPressed: () {
-              context.read<AuthenticationService>().signOut();
-            },
-            child: Text(
-              'Log Out',
-              style: TextStyle(fontSize: kTextSize, color: kTextColor),
-            ),
-          ),
         ],
       ),
     );

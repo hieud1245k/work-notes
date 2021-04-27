@@ -53,13 +53,20 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
                 child: Image.asset('assets/logo.png'),
               ),
               Spacer(),
-              FlatButton(
-                onPressed: () {
-                  context.read<AuthenticationService>().signOut();
-                },
-                child: Text(
-                  'Log Out',
-                  style: TextStyle(fontSize: kTextSize, color: kTextColor),
+              Container(
+                margin: EdgeInsets.only(right: 40, top: 15, bottom: 15),
+                child: FlatButton(
+                  onPressed: () {
+                    context.read<AuthenticationService>().signOut();
+                  },
+                  child: Text(
+                    'Log Out',
+                    style: TextStyle(fontSize: kTextSize, color: kTextColor),
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white60.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(5),
                 ),
               ),
             ],
@@ -114,6 +121,21 @@ class _WorkViewDetailState extends State<WorkViewDetail> {
                         ),
                       ),
                     ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(25, 3, 0, 3),
+                    child: Text(
+                      workModel.createdDate.day.toString() +
+                          " - " +
+                          workModel.createdDate.month.toString() +
+                          " - " +
+                          workModel.createdDate.year.toString() +
+                          ", " +
+                          workModel.createdDate.hour.toString() +
+                          ": " +
+                          workModel.createdDate.min.toString(),
+                      style: TextStyle(color: Colors.black54, fontStyle: FontStyle.italic, fontSize: kTitleSize * 2 / 3),
+                    ),
                   ),
                   Card(
                     color: kBoxColor,

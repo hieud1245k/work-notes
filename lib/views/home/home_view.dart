@@ -8,6 +8,8 @@ import 'package:worknotes/constant.dart';
 import 'package:worknotes/model/WorkModel.dart';
 import 'package:worknotes/views/home/work_view_detail.dart';
 import 'package:worknotes/widgets/navigation_bar/navigation_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:worknotes/service/AuthenticationService.dart';
 
 List<WorkModel> works = [];
 
@@ -62,6 +64,7 @@ class HomeState extends State<HomeView> {
     getValue();
   }
 
+
   //----------------------------------------------------------------------------------------------------------------------//
   //_getValue
   //----------------------------------------------------------------------------------------------------------------------//
@@ -85,7 +88,7 @@ class HomeState extends State<HomeView> {
         title: NavigationBar(),
         actions: [
           Container(
-            margin: EdgeInsets.only(right: 40),
+            margin: EdgeInsets.only(right: 40, left: 40),
             child: IconButton(
               icon: Icon(
                 Icons.check_box,
@@ -104,14 +107,35 @@ class HomeState extends State<HomeView> {
               onPressed: _workFavorite,
             ),
           ),
+          // Container(
+          //   margin: EdgeInsets.only(right: 40, top: 15, bottom: 15),
+          //   child: FlatButton(
+          //     onPressed: () {
+          //       context.read<AuthenticationService>().signOut();
+          //     },
+          //     child: Text(
+          //       'Log Out',
+          //       style: TextStyle(fontSize: kTextSize, color: kTextColor),
+          //     ),
+          //   ),
+          //   decoration: BoxDecoration(
+          //     color: Colors.white60.withOpacity(0.1),
+          //     borderRadius: BorderRadius.circular(5),
+          //   ),
+          // ),
           Container(
-            margin: EdgeInsets.only(right: 40),
+            margin: const EdgeInsets.only(right: 40),
             child: IconButton(
               icon: Icon(
-                Icons.more_vert,
+                Icons.person_pin_rounded,
                 color: Colors.black54,
               ),
-              // onPressed: ,
+              onPressed: () {
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => ));
+              },
             ),
           ),
         ],
@@ -170,17 +194,27 @@ class HomeState extends State<HomeView> {
                       Text(
                         work.title,
                         style: TextStyle(
-                            color: kTitleColor, fontSize: kTitleSize, fontWeight: FontWeight.bold,
+                          color: kTitleColor,
+                          fontSize: kTitleSize,
+                          fontWeight: FontWeight.bold,
                           decoration: work.isCheck ? TextDecoration.lineThrough : null,
                           decorationColor: Colors.black,
                           decorationStyle: TextDecorationStyle.wavy,
                           decorationThickness: 1.0,
-                            ),
+                        ),
                       ),
                       Container(
                         margin: const EdgeInsets.only(top: 5),
                         child: Text(
-                          work.createdDate.toString(),
+                          work.createdDate.day.toString() +
+                              " - " +
+                              work.createdDate.month.toString() +
+                              " - " +
+                              work.createdDate.year.toString() +
+                              ", " +
+                              work.createdDate.hour.toString() +
+                              ": " +
+                              work.createdDate.min.toString(),
                           style: TextStyle(color: Colors.black54, fontStyle: FontStyle.italic, fontSize: kTitleSize * 2 / 3),
                         ),
                       )
@@ -264,7 +298,7 @@ class HomeState extends State<HomeView> {
   }
 
   //----------------------------------------------------------------------------------------------------------------------//
-  //_workCompleted
+  //_workCompleted Page
   //----------------------------------------------------------------------------------------------------------------------//
   void _workCompleted() {
     final _listWorkCompleted = <WorkModel>{};
@@ -301,11 +335,18 @@ class HomeState extends State<HomeView> {
                         Container(
                           margin: const EdgeInsets.only(top: 5),
                           child: Text(
-                            work.createdDate.toString(),
+                            work.createdDate.day.toString() +
+                                " - " +
+                                work.createdDate.month.toString() +
+                                " - " +
+                                work.createdDate.year.toString() +
+                                ", " +
+                                work.createdDate.hour.toString() +
+                                ": " +
+                                work.createdDate.min.toString(),
                             style: TextStyle(color: Colors.black54, fontStyle: FontStyle.italic, fontSize: kTitleSize * 2 / 3),
                           ),
                         ),
-
 
                         //-----------------------------------------------------------------------------------------------------//
                         //_unTick_Work_Completed
@@ -367,6 +408,36 @@ class HomeState extends State<HomeView> {
                   child: Image.asset('assets/logo.png'),
                 ),
               ),
+              Spacer(),
+              // Container(
+              //   margin: EdgeInsets.only(right: 40, top: 15, bottom: 15),
+              //   child: FlatButton(
+              //     onPressed: () {
+              //       context.read<AuthenticationService>().signOut();
+              //       Navigator.pop(context);
+              //     },
+              //     child: Text(
+              //       'Log Out',
+              //       style: TextStyle(fontSize: kTextSize, color: kTextColor),
+              //     ),
+              //   ),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white60.withOpacity(0.1),
+              //     borderRadius: BorderRadius.circular(5),
+              //   ),
+              // ),
+              Container(
+                margin: const EdgeInsets.only(right: 40),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.black54,
+                  ),
+                  onPressed: () {
+
+                  },
+                ),
+              ),
             ],
           ),
           titleTextStyle: TextStyle(color: kTitleColor, fontSize: kTitleSize),
@@ -379,8 +450,8 @@ class HomeState extends State<HomeView> {
     }));
   }
 
-//----------------------------------------------------------------------------------------------------------------------//
-  //_workFavorite
+  //----------------------------------------------------------------------------------------------------------------------//
+  //_workFavorite Page
   //----------------------------------------------------------------------------------------------------------------------//
   void _workFavorite() {
     final _listWorkFavorite = <WorkModel>{};
@@ -417,11 +488,18 @@ class HomeState extends State<HomeView> {
                         Container(
                           margin: const EdgeInsets.only(top: 5),
                           child: Text(
-                            work.createdDate.toString(),
+                            work.createdDate.day.toString() +
+                                " - " +
+                                work.createdDate.month.toString() +
+                                " - " +
+                                work.createdDate.year.toString() +
+                                ", " +
+                                work.createdDate.hour.toString() +
+                                ": " +
+                                work.createdDate.min.toString(),
                             style: TextStyle(color: Colors.black54, fontStyle: FontStyle.italic, fontSize: kTitleSize * 2 / 3),
                           ),
                         ),
-
 
                         //-----------------------------------------------------------------------------------------------------//
                         //_unFavorite_Work
@@ -474,13 +552,43 @@ class HomeState extends State<HomeView> {
       return Scaffold(
         appBar: AppBar(
           title: Row(
-            children: [
+            children: <Widget>[
               Container(
                 margin: const EdgeInsets.only(left: 0),
                 child: SizedBox(
                   height: 80,
                   width: 150,
                   child: Image.asset('assets/logo.png'),
+                ),
+              ),
+              Spacer(),
+              // Container(
+              //   margin: EdgeInsets.only(right: 40, top: 15, bottom: 15),
+              //   child: FlatButton(
+              //     onPressed: () {
+              //       context.read<AuthenticationService>().signOut();
+              //       Navigator.pop(context);
+              //     },
+              //     child: Text(
+              //       'Log Out',
+              //       style: TextStyle(fontSize: kTextSize, color: kTextColor),
+              //     ),
+              //   ),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white60.withOpacity(0.1),
+              //     borderRadius: BorderRadius.circular(5),
+              //   ),
+              // ),
+              Container(
+                margin: const EdgeInsets.only(right: 40),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.black54,
+                  ),
+                  onPressed: () {
+
+                  },
                 ),
               ),
             ],
@@ -508,6 +616,7 @@ class HomeState extends State<HomeView> {
             style: TextStyle(fontSize: kTitleSize, color: Colors.blue),
           ),
           content: Container(
+            width: 500,
             child: TextField(
               controller: _textFieldController,
               decoration: InputDecoration(hintText: "Enter your work title", hintStyle: TextStyle(color: kHintTextColor)),
@@ -587,7 +696,6 @@ class HomeState extends State<HomeView> {
       },
     );
   }
-
 
   //----------------------------------------------------------------------------------------------------------------------//
   //_unTickDialog

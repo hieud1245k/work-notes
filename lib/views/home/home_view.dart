@@ -101,8 +101,8 @@ class HomeState extends State<HomeView> {
             margin: EdgeInsets.only(right: 40),
             child: IconButton(
               icon: Icon(
-                Icons.favorite_border,
-                color: Colors.black54,
+                Icons.favorite,
+                color: Colors.redAccent.withOpacity(0.85),
               ),
               onPressed: _workFavorite,
             ),
@@ -127,14 +127,11 @@ class HomeState extends State<HomeView> {
             margin: const EdgeInsets.only(right: 40),
             child: IconButton(
               icon: Icon(
-                Icons.person_pin_rounded,
+                Icons.exit_to_app,
                 color: Colors.black54,
               ),
               onPressed: () {
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => ));
+                context.read<AuthenticationService>().signOut();
               },
             ),
           ),

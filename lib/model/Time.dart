@@ -1,7 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 
 class Time {
-  String key;
   int year;
   int month;
   int day;
@@ -19,14 +18,13 @@ class Time {
     second = dt.second;
   }
 
-  Time.fromSnapshot(DataSnapshot snapshot)
-      : key = snapshot.key,
-        year = snapshot.value["title"],
-        month = snapshot.value["content"],
-        day = snapshot.value["createdDate"],
-        hour = snapshot.value["ModifiedDate"],
-        min = snapshot.value["isDelete"],
-        second = snapshot.value["isDelete"];
+  Time.fromJson(Map<String, dynamic> json)
+        :day = json["day"],
+        month = json["month"],
+        year = json["year"],
+        hour = json["hour"],
+        min = json["min"],
+        second = json["second"];
 
   toJson() {
     return {

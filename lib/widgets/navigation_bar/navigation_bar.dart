@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_db_web_unofficial/firebasedbwebunofficial.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:worknotes/service/AuthenticationService.dart';
+import 'package:worknotes/constant.dart';
 
 class NavigationBar extends StatefulWidget {
   @override
@@ -34,6 +33,7 @@ class _NavBar extends State<NavigationBar> {
   Widget build(BuildContext context) {
     return Container(
       height: 100,
+      color: kBarColor,
       child: Row(
         children: <Widget>[
           Row(
@@ -44,51 +44,21 @@ class _NavBar extends State<NavigationBar> {
                 width: 150,
                 child: Image.asset('assets/logo.png'),
               ),
-              _NarBarItem("Home"),
             ],
           ),
           Spacer(),
-          Container(
-            padding: const EdgeInsets.only(right: 50),
-            alignment: Alignment.centerRight,
-            child: Row(
-              children: [
-                ValueListenableBuilder<String>(
-                    valueListenable: _workNotifier,
-                    builder: (context, works, child) {
-                  return Text("Xin chào, " + name);
-                }),
-                // ignore: deprecated_member_use
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 20
-                  ),
-                  child: FlatButton(
-                    onPressed: () {
-                      context.read<AuthenticationService>().signOut();
-                    },
-                    child: Text('Logout' , style:  TextStyle(fontSize: 18, color: Colors.black),),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ValueListenableBuilder<String>(
+              valueListenable: _workNotifier,
+              builder: (context, works, child) {
+                return Text(
+                  "Hello, " + name,
+                  style:
+                  TextStyle(color: kTextColor, fontSize: kTextSize),
+                );
+              }),
         ],
       ),
     );
   }
 }
 
-class _NarBarItem extends StatelessWidget {
-  final String title;
-
-  const _NarBarItem(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: TextStyle(fontSize: 18),
-    );
-  }
-}
